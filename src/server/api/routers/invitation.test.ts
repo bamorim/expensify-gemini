@@ -3,6 +3,7 @@ import { invitationRouter } from "./invitation";
 import { db } from "~/server/db";
 import { faker } from "@faker-js/faker";
 import { sendInvitationEmail } from "~/server/email";
+import assert from "assert";
 
 // Mock the database to use the transactional testing wrapper
 vi.mock("~/server/db");
@@ -57,7 +58,10 @@ describe("InvitationRouter", () => {
       });
 
       const email = faker.internet.email();
-      const result = await caller.create({ email, organizationId: organization.id });
+      const result = await caller.create({
+        email,
+        organizationId: organization.id,
+      });
 
       expect(result.email).toEqual(email);
       expect(sendInvitationEmail).toHaveBeenCalledOnce();
@@ -66,39 +70,42 @@ describe("InvitationRouter", () => {
 
   describe("list", () => {
     it("should return a list of pending invitations", async () => {
-        const user = await db.user.create({
-            data: {
-              name: "Test User",
-              email: faker.internet.email(),
-            },
-          });
-    
-          const organization = await db.organization.create({
-            data: {
-              name: "Test Organization",
-            },
-          });
-    
-          await db.organizationUser.create({
-            data: {
-              userId: user.id,
-              organizationId: organization.id,
-              role: "ADMIN",
-            },
-          });
-    
-          const mockSession = {
-            user,
-            expires: "2030-12-31T23:59:59.999Z",
-          };
-    
-          const caller = invitationRouter.createCaller({
-            db: db,
-            session: mockSession,
-            headers: new Headers(),
-          });
+      const user = await db.user.create({
+        data: {
+          name: "Test User",
+          email: faker.internet.email(),
+        },
+      });
 
-      await caller.create({ email: faker.internet.email(), organizationId: organization.id });
+      const organization = await db.organization.create({
+        data: {
+          name: "Test Organization",
+        },
+      });
+
+      await db.organizationUser.create({
+        data: {
+          userId: user.id,
+          organizationId: organization.id,
+          role: "ADMIN",
+        },
+      });
+
+      const mockSession = {
+        user,
+        expires: "2030-12-31T23:59:59.999Z",
+      };
+
+      const caller = invitationRouter.createCaller({
+        db: db,
+        session: mockSession,
+        headers: new Headers(),
+      });
+
+      await caller.create({
+        email: faker.internet.email(),
+        organizationId: organization.id,
+      });
 
       const list = await caller.list({ organizationId: organization.id });
 
@@ -108,46 +115,50 @@ describe("InvitationRouter", () => {
 
   describe("accept", () => {
     it("should allow a user to accept a valid invitation", async () => {
-        const user = await db.user.create({
-            data: {
-              name: "Test User",
-              email: faker.internet.email(),
-            },
-          });
-    
-          const organization = await db.organization.create({
-            data: {
-              name: "Test Organization",
-            },
-          });
-    
-          const adminUser = await db.user.create({
-            data: {
-              name: "Admin User",
-              email: faker.internet.email(),
-            },
-          });
+      const user = await db.user.create({
+        data: {
+          name: "Test User",
+          email: faker.internet.email(),
+        },
+      });
+      assert(user.email !== null);
 
-          await db.organizationUser.create({
-            data: {
-              userId: adminUser.id,
-              organizationId: organization.id,
-              role: "ADMIN",
-            },
-          });
+      const organization = await db.organization.create({
+        data: {
+          name: "Test Organization",
+        },
+      });
 
-          const mockAdminSession = {
-            user: adminUser,
-            expires: "2030-12-31T23:59:59.999Z",
-          };
+      const adminUser = await db.user.create({
+        data: {
+          name: "Admin User",
+          email: faker.internet.email(),
+        },
+      });
 
-          const adminCaller = invitationRouter.createCaller({
-            db: db,
-            session: mockAdminSession,
-            headers: new Headers(),
-          });
+      await db.organizationUser.create({
+        data: {
+          userId: adminUser.id,
+          organizationId: organization.id,
+          role: "ADMIN",
+        },
+      });
 
-      const invitation = await adminCaller.create({ email: user.email, organizationId: organization.id });
+      const mockAdminSession = {
+        user: adminUser,
+        expires: "2030-12-31T23:59:59.999Z",
+      };
+
+      const adminCaller = invitationRouter.createCaller({
+        db: db,
+        session: mockAdminSession,
+        headers: new Headers(),
+      });
+
+      const invitation = await adminCaller.create({
+        email: user.email,
+        organizationId: organization.id,
+      });
 
       const mockUserSession = {
         user,

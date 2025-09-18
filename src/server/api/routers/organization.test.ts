@@ -73,7 +73,7 @@ describe("OrganizationRouter", () => {
             headers: new Headers(),
           });
 
-      const org = await caller.create({ name: "Test Org" });
+      await caller.create({ name: "Test Org" });
 
       const list = await caller.list();
 

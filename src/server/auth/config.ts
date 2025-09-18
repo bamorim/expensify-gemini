@@ -39,7 +39,7 @@ export const authConfig = {
       user: {
         ...session.user,
         id: user.id,
-        name: user.name || user.email,
+        name: user.name ?? user.email,
       },
     }),
   },

@@ -17,20 +17,20 @@ function OrganizationItem({ orgUser }: { orgUser: { organization: { id: string; 
 
   const updateOrganization = api.organization.update.useMutation({
     onSuccess: () => {
-      utils.organization.list.invalidate();
+      void utils.organization.list.invalidate();
       setIsEditing(false);
     },
   });
 
   const deleteOrganization = api.organization.delete.useMutation({
     onSuccess: () => {
-      utils.organization.list.invalidate();
+      void utils.organization.list.invalidate();
     },
   });
 
   const createInvitation = api.invitation.create.useMutation({
     onSuccess: () => {
-      utils.invitation.list.invalidate({ organizationId: orgUser.organization.id });
+      void utils.invitation.list.invalidate({ organizationId: orgUser.organization.id });
       setEmailToInvite("");
     },
   });
@@ -148,7 +148,7 @@ export default function OrganizationsPage() {
 
   const createOrganization = api.organization.create.useMutation({
     onSuccess: () => {
-      utils.organization.list.invalidate();
+      void utils.organization.list.invalidate();
       setName("");
     },
   });

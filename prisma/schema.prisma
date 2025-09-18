@@ -63,6 +63,7 @@ model Organization {
     createdAt DateTime    @default(now())
     updatedAt DateTime    @updatedAt
     users     OrganizationUser[]
+    invitations Invitation[]
 }
 
 model OrganizationUser {
@@ -74,4 +75,16 @@ model OrganizationUser {
     organizationId String
 
     @@unique([userId, organizationId])
+}
+
+model Invitation {
+  id             String   @id @default(cuid())
+  email          String
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  token          String   @unique
+  expires        DateTime
+  createdAt      DateTime @default(now())
+
+  @@unique([email, organizationId])
 }

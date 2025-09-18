@@ -14,6 +14,7 @@ export const env = createEnv({
     MAIL_SERVER: z.string().url().default("smtp://127.0.0.1:1025"),
     MAIL_FROM: z.string().email().default("no-reply@expensify.com"),
     AUTH_SECRET: z.string().min(1).default("notsosecret"),
+    NEXTAUTH_URL: z.string().url().default("http://localhost:3000"),
   },
 
   /**
@@ -35,6 +36,7 @@ export const env = createEnv({
     MAIL_SERVER: process.env.MAIL_SERVER,
     MAIL_FROM: process.env.MAIL_FROM,
     AUTH_SECRET: process.env.AUTH_SECRET,
+    NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**

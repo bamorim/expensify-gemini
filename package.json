@@ -22,7 +22,7 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test:reset": "dotenv -c test -- prisma migrate reset -f",
-    "test": "dotenv -c test -- vitest"
+    "test": "dotenv -c test -- vitest run"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.10.0",

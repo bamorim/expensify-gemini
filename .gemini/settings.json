@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "prisma": {
+      "command": "pnpm",
+      "args": ["exec", "prisma", "mcp"]
+    }
+  }
+}
+

@@ -1,0 +1,23 @@
+{
+  "mcpServers": {
+      "Prisma-Local": {
+          "command": "pnpm",
+          "args": [
+              "exec",
+              "prisma",
+              "mcp"
+          ]
+      },
+      "LSP": {
+          "command": "mcp-language-server",
+          "args": [
+              "--workspace",
+              ".",
+              "--lsp",
+              "typescript-language-server",
+              "--",
+              "--stdio"
+          ]
+      }
+  }
+}

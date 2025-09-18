@@ -1,0 +1,5 @@
+[tools]
+go = "1.24.5"
+node = "24.4.1"
+"go:github.com/isaacphi/mcp-language-server" = "0.1.1"
+"npm:typescript-language-server" = "^4.3.4"

@@ -1,6 +1,6 @@
 # Task: Expense Categories
 
-- **Status**: To Do
+- **Status**: Done
 - **Priority**: P1
 - **Author**: Gemini
 - **Last Updated**: September 2025
@@ -12,16 +12,16 @@ This task is to implement the management of expense categories. Administrators s
 
 ## Acceptance Criteria
 
-- [ ] An admin can create a new expense category with a name and optional description.
-- [ ] An admin can edit the name and description of an existing category.
-- [ ] An admin can delete a category.
-- [ ] Expense categories are scoped to an organization.
+- [x] An admin can create a new expense category with a name and optional description.
+- [x] An admin can edit the name and description of an existing category.
+- [x] An admin can delete a category.
+- [x] Expense categories are scoped to an organization.
 
 ## TODOs
 
-- [ ] Create a `Category` model in `prisma/schema.prisma` with fields for `name`, `description`, and `organizationId`.
-- [ ] Generate a database migration for the new model.
-- [ ] Create a tRPC router `category.ts` with procedures for `create`, `update`, `delete`, and `list`.
-- [ ] The procedures must enforce that only admins can manage categories.
-- [ ] Create a UI for admins to manage expense categories.
-- [ ] Write unit tests for the `category` tRPC router.
+- [x] Create a `Category` model in `prisma/schema.prisma` with fields for `name`, `description`, and `organizationId`.
+- [x] Generate a database migration for the new model.
+- [x] Create a tRPC router `category.ts` with procedures for `create`, `update`, `delete`, and `list`.
+- [x] The procedures must enforce that only admins can manage categories.
+- [x] Create a UI for admins to manage expense categories.
+- [x] Write unit tests for the `category` tRPC router.

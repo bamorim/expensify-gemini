@@ -131,3 +131,41 @@ export const protectedProcedure = t.procedure
       },
     });
   });
+
+/**
+ * Helper function to check if a user is a member of an organization.
+ * Returns the organization and the user's role within it.
+ */
+export async function requireMembership(user: { id: string }, organizationId: string) {
+  const orgUser = await db.organizationUser.findUnique({
+    where: {
+      userId_organizationId: {
+        userId: user.id,
+        organizationId: organizationId,
+      },
+    },
+    include: {
+      organization: true,
+    },
+  });
+
+  if (!orgUser) {
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "Not a member of this organization." });
+  }
+
+  return { organization: orgUser.organization, role: orgUser.role };
+}
+
+/**
+ * Helper function to check if a user is an admin of an organization.
+ * Returns the organization and confirms the user's role is ADMIN.
+ */
+export async function requireAdmin(user: { id: string }, organizationId: string) {
+  const { organization, role } = await requireMembership(user, organizationId);
+
+  if (role !== "ADMIN") {
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "Must be an admin of this organization." });
+  }
+
+  return { organization, role };
+}

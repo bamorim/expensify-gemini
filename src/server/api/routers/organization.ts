@@ -3,6 +3,8 @@ import { z } from "zod";
 import {
   createTRPCRouter,
   protectedProcedure,
+  requireAdmin,
+  requireMembership,
 } from "~/server/api/trpc";
 
 export const organizationRouter = createTRPCRouter({
@@ -43,19 +45,7 @@ export const organizationRouter = createTRPCRouter({
     .input(z.object({ id: z.string(), name: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
       const { id, name } = input;
-
-      const orgUser = await ctx.db.organizationUser.findUnique({
-        where: {
-          userId_organizationId: {
-            userId: ctx.session.user.id,
-            organizationId: id,
-          },
-        },
-      });
-
-      if (orgUser?.role !== "ADMIN") {
-        throw new Error("You must be an admin to update this organization.");
-      }
+      await requireAdmin(ctx.session.user, id);
 
       return ctx.db.organization.update({
         where: { id },
@@ -67,22 +57,33 @@ export const organizationRouter = createTRPCRouter({
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { id } = input;
-
-      const orgUser = await ctx.db.organizationUser.findUnique({
-        where: {
-          userId_organizationId: {
-            userId: ctx.session.user.id,
-            organizationId: id,
-          },
-        },
-      });
-
-      if (orgUser?.role !== "ADMIN") {
-        throw new Error("You must be an admin to delete this organization.");
-      }
+      await requireAdmin(ctx.session.user, id);
 
       return ctx.db.organization.delete({
         where: { id },
+      });
+    }),
+
+  get: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const { organization, role } = await requireMembership(ctx.session.user, input.id);
+      return { organization, role };
+    }),
+
+  listMembers: protectedProcedure
+    .input(z.object({ organizationId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const { organizationId } = input;
+      await requireMembership(ctx.session.user, organizationId);
+
+      return ctx.db.organizationUser.findMany({
+        where: {
+          organizationId: organizationId,
+        },
+        include: {
+          user: true,
+        },
       });
     }),
 });

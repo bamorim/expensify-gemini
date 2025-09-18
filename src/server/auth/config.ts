@@ -34,6 +34,9 @@ export const authConfig = {
   secret: env.AUTH_SECRET,
   adapter: PrismaAdapter(db),
   callbacks: {
+    signIn: async ({ user: _user, account: _account, profile: _profile, email: _email, credentials: _credentials }) => {
+      return "/welcome";
+    },
     session: ({ session, user }) => ({
       ...session,
       user: {
